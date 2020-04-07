@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -35,6 +36,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.List;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -135,6 +137,21 @@ public class MainActivity extends Activity {
                 startActivity(new Intent(Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS));
             }
         });
+
+        findViewById(R.id.switch_nolimit_wifi).setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                changeWifi("L-014", false);
+            }
+        });
+
+        findViewById(R.id.switch_injury_wifi).setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                changeWifi("L-006", false);
+            }
+        });
+
 
         Intent intent = getIntent();
         boolean isHide = intent.getBooleanExtra("hide", false);
@@ -364,5 +381,24 @@ public class MainActivity extends Activity {
         // must unbind service, otherwise it will leak memory
         // connection no need to set it to null
         Log.i(TAG, "unbind service");
+    }
+
+    private void changeWifi(String ssid, boolean fuzzyMatch) {
+        String new_ssid = ssid.replace("\"", "");
+        WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        List<WifiConfiguration> list = wifiManager.getConfiguredNetworks();
+        for (WifiConfiguration wifiConfiguration : list) {
+            String wifiSSID = wifiConfiguration.SSID;
+            wifiSSID = wifiSSID.replace("\"", "");
+            boolean ssidMatch = fuzzyMatch ? wifiSSID.startsWith(new_ssid) : wifiSSID.equals(new_ssid);
+            if (ssidMatch) {
+                wifiConfiguration.preSharedKey = "vqqtest@123";
+                wifiManager.disconnect();
+                wifiManager.enableNetwork(wifiConfiguration.networkId, true);
+                wifiManager.reconnect();
+                Toast.makeText(this, "change wifi to : " + new_ssid + " success", Toast.LENGTH_SHORT).show();
+                break;
+            }
+        }
     }
 }

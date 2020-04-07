@@ -154,6 +154,27 @@
 
         <LinearLayout
             android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <Button
+                android:id="@+id/switch_nolimit_wifi"
+                style="@style/SelectButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="切换无损网络" />
+
+            <Button
+                android:id="@+id/switch_injury_wifi"
+                style="@style/SelectButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="切换损伤网络" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
